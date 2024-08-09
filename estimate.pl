@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Author: Elia Farin 2024
+# Author: Elia Farin
 # Written: 8/9/24
 # Modified: 8/9/24
 # License: AGPL-3.0-or-later

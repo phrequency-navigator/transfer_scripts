@@ -5,7 +5,7 @@
 # Modified: 8/9/24
 # License: AGPL-3.0-or-later
 #
-#    Copyright (C) 2024 Elia Farin
+#   Copyright (C) 2024 Elia Farin
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as
@@ -19,7 +19,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+#
+#
 if [ -z "${1}" ]; then
 	echo "Usage: ${0} <filename>"
 	exit 1

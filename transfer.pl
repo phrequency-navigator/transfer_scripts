@@ -1,9 +1,4 @@
 #!/usr/local/bin/perl
-
-use strict;
-use Getopt::Long;
-use Proc::Pidfile;
-
 # Transfer script transfer.pl
 # Author: Elia Farin 
 # Written: 8/9/24
@@ -25,25 +20,17 @@ use Proc::Pidfile;
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-my $pidfile;
-# if we are root, create a pidfile
-if ($> = 0) {
-	my $pp = Proc::Pidfile->new( pidfile => "/var/run/transfer.pl.pid" );
-} else {
-# if not, create our home pidfile
-	my $home = $ENV("$HOME");
-	my $pp = Proc::Pidfile->new( pidfile => "$home/transfer.pl.pid");
-}
-
-# die if we cannot get pidfile lock
-$pidfile = $pp->$pidfile();
+use strict;
+use Getopt::Long;
+use re;
+my $username = getlogin() || (getpwuid($<))[0] || $ENV{LOGNAME} || $ENV{USER};
 
 # sane defaults
 my $file = "";
-my $host = "192.168.42.100";
+my $host = "";
 my $directory = ".";
-my $user = "char";
-my $dest= "/home/char/Downloads/";
+my $user = $username;
+my $dest= "/home/$username/Downloads/";
 my $flags = "rvz";
 my $verbose;
 my $help;
@@ -86,9 +73,6 @@ elsif (length $file && length $host && length $user && length $dest && length $d
 else {
 	help();
 }
-
-# remove the pidfile
-undef $pp;
 
 # help subroutine
 sub help {
