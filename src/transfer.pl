@@ -25,84 +25,97 @@ use Getopt::Long;
 
 
 # sane defaults
-my $file = "";
+my $path= "";
 my $host = "";
-my $directory = ".";
 my $user = getlogin() || (getpwuid($<))[0] || $ENV{LOGNAME} || $ENV{USER};
 my $dest= "/home/$user/Downloads/";
 my $flags = "rvz";
 my $verbose;
 my $help;
+my $dir;
 
 # options
-my $result = GetOptions ( "file=s" => \$file,
+my $result = GetOptions ( "path=s" => \$path,
 	"host=s" => \$host,
-	"directory=s" => \$directory,
+	"dir" => \$dir,
 	"user=s" => \$user,
 	"dest=s" => \$dest,
 	"flags=s" => \$flags,
 	"verbose" => \$verbose,
 	"help" => \$help);
 
-print "file: $file, host: $host, directory: $directory, user: $user, dest: $dest flags: $flags verbose: $verbose help: $help\n";
-### Begin main logic
-# help catch
-if ($help) {
-	help();
 
-}
-# If we have all the right arguments, begin the copy
-elsif (length $file && length $host && length $user && length $dest && length $directory) {
-	#print "in elsif block\n";
-	# Open our filehandle
-	open my $info, $file or die "Could not open $file: $!";
+sub transfer {
+	#print "file: $file, host: $host, srcdir: $dir, user: $user, dest: $dest flags: $flags verbose: $verbose help: $help\n";
+	### Begin main logic
+	# help catch
+	if ($help) {
+		help();
 
-	
-	my $linenum = 0;
-	while( my $iterline = <$info>) {
-		#print "in first while loop\n";
-		$linenum++;
+	} 
+	# if we're passed the directory flag and we have the required options set
+	elsif ($dir && length $host && length $dest && length $user) {
+
+		print "Transferring object 1 of 1 \n\n";
+
+		# transfer our directory
+		system("rsync", "-$flags", "$dir", "$user\@$host:$dest");
 	}
-	close $file;
-
-	open $info, $file or die "Could not open $file: $!";
-	my $xfernum = 0;
-	# read line by line
-	while( my $line = <$info> ) {
-		#print "in second while loop\n";
-		$xfernum++;
-		chomp $line;
-		# actual copy logic
-		if (length $verbose) {
-			#print "in verbose section";
-			print "\n\nTransferring object $xfernum of $linenum\n\n";
-			system("rsync", "-vvv", "-$flags", "$directory/$line", "$user\@$host:$dest");
-		} else {
-		#print "in non-verbose section";
-		print "\n\nTransferring object $xfernum of $linenum\n\n";
-		system("rsync", "-$flags", "$directory/$line", "$user\@$host:$dest");
+	# If we have all the right options set for an infile, begin the copy
+	elsif (length $path && length $host && length $user && length $dest) {
+		#print "in elsif block\n";
+		# Open our filehandle
+		open my $info, $path or die "Could not open $path: $!";
+		
+		my $linesnum = 0;
+		while( my $iterline = <$info>) {
+			#print "in first while loop\n";
+			$linesnum++;
 		}
+
+		# wqe need to close the filehandle or we won't be able to read the file again
+		close $path;
+
+		# open our filehandle, this time for taking action
+		open $info, $path or die "Could not open $path: $!";
+		my $xfernum = 0;
+		# read line by line
+		while( my $line = <$info> ) {
+			#print "in second while loop\n";
+			$xfernum++;
+			chomp $line;
+			# actual copy logic
+			if (length $verbose) {
+				#print "in verbose section";
+				print "\n\nTransferring object $xfernum of $linesnum\n\n";
+				system("rsync", "-vvv", "-$flags", "$dir/$line", "$user\@$host:$dest");
+			} else {
+			#print "in non-verbose section";
+			print "\n\nTransferring object $xfernum of $linenum\n\n";
+			system("rsync", "-$flags", "$dir/$line", "$user\@$host:$dest");
+			}
+		}
+		close $path;
+
+	} 
+	# if we fail the variables check, print usage help
+	else {
+		#print "In help else\n";
+		help();
 	}
-	close $file;
 
-} 
-# if we fail the variables check, print usage help
-else {
-	#print "In help else\n";
-	help();
+	# help subroutine
+	sub help {
+		print "Usage: $ARGV[0] --path <infile or directory> [--dir] --host <IP or DNS name> --user <username> --dest <destination path> [--flags <rsync flags>] [--verbose] [--help]\n
+		--path 		- Input file to read or directory to copy
+		--host 		- IP address or hostname of the remote system\n
+		--dir 		- enable directory copy mode\n
+		--user 		- User account on the remote system to use\n
+		--dest 		- Destination on the remote system to copy files to\n
+		--flags 	- rsync flags to use when copying the files over. Defaults to rvz\n
+		--verbose	- run rsync with -vvv\n
+		--help 		- show this help\n";
+	}
 }
 
-# help subroutine
-sub help {
-	print "Usage: $ARGV[0] --file= --host= --directory= --user= --dest= --flags= [--verbose] [--help]\n
-	--file - Input file to read with list of files/folders to transfer \n
-	--host - IP address or hostname of the remote system\n
-	--directory - Relative or absolute path to the folder containing the files/folders to transfer, \n
-		      with no trailing slash\n
-	--user - User account on the remote system to use\n
-	--dest - Destination on the remote system to copy files to\n
-	--flags - rsync flags to use when copying the files over\n
-	--verbose - run rsync with -vvv\n
-	--help - show this help\n";
-}
-
+transfer();
