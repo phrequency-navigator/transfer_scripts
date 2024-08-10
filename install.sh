@@ -30,3 +30,5 @@ cp ./fixlist.sh /usr/local/bin/fixlist.sh
 chmod 755 /usr/local/bin/transfer.pl
 chmod 755 /usr/local/bin/estimate.pl
 chmod 755 /usr/local/bin/fixlist.sh
+
+cpan install Getopt::Long
