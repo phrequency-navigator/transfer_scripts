@@ -1,1 +1,2 @@
-testfolder
+testfolder/*
+test*.txt
