@@ -24,11 +24,16 @@ if [ "$EUID" -ne 0 ]; then
 	echo "This script must be run as root to install system-wide"
 	exit 1
 fi
-cp ./transfer.pl /usr/local/bin/transfer.pl
-cp ./estimate.pl /usr/local/bin/estimate.pl
-cp ./fixlist.sh /usr/local/bin/fixlist.sh
+cp ./src/transfer.pl /usr/local/bin/transfer.pl
+cp ./src/estimate.pl /usr/local/bin/estimate.pl
+cp ./src/fixlist.sh /usr/local/bin/fixlist.sh
 chmod 755 /usr/local/bin/transfer.pl
 chmod 755 /usr/local/bin/estimate.pl
 chmod 755 /usr/local/bin/fixlist.sh
 
 cpan install Getopt::Long
+
+if [ -z "$(echo $PATH | grep '.usr.local.bin')" ]; then
+	echo "/usr/local/bin not found in your PATH."
+	echo "Please add /usr/local/bin to your PATH export"
+fi
