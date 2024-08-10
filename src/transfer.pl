@@ -27,6 +27,7 @@ use Getopt::Long;
 # sane defaults
 my $path= "";
 my $host = "";
+# get running user's name
 my $user = getlogin() || (getpwuid($<))[0] || $ENV{LOGNAME} || $ENV{USER};
 my $dest= "/home/$user/Downloads/";
 my $flags = "rvz";
@@ -108,12 +109,12 @@ sub transfer {
 	sub help {
 		print "Usage: $ARGV[0] --path <infile or directory> [--dir] --host <IP or DNS name> --user <username> --dest <destination path> [--flags <rsync flags>] [--verbose] [--help]\n
 		--path 		- Input file to read or directory to copy
-		--host 		- IP address or hostname of the remote system\n
-		--dir 		- enable directory copy mode\n
-		--user 		- User account on the remote system to use\n
-		--dest 		- Destination on the remote system to copy files to\n
-		--flags 	- rsync flags to use when copying the files over. Defaults to rvz\n
-		--verbose	- run rsync with -vvv\n
+		--host 		- IP address or hostname of the remote system
+		--dir 		- enable directory copy mode
+		--user 		- User account on the remote system to use
+		--dest 		- Destination on the remote system to copy files to
+		--flags 	- rsync flags to use when copying the files over. Defaults to rvz
+		--verbose	- run rsync with -vvv
 		--help 		- show this help\n";
 	}
 }
