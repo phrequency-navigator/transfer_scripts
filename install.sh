@@ -24,9 +24,9 @@ if [ "$EUID" -ne 0 ]; then
 	echo "This script must be run as root to install system-wide"
 	exit 1
 fi
-cp ./src/transfer.pl /usr/local/bin/transfer.pl
-cp ./src/estimate.pl /usr/local/bin/estimate.pl
-cp ./src/fixlist.sh /usr/local/bin/fixlist.sh
+cp ./src/transfer.pl /usr/local/bin/transfer
+cp ./src/estimate.pl /usr/local/bin/estimate
+cp ./src/fixlist.sh /usr/local/bin/fixlist
 chmod 755 /usr/local/bin/transfer.pl
 chmod 755 /usr/local/bin/estimate.pl
 chmod 755 /usr/local/bin/fixlist.sh
