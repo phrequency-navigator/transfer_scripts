@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/env perl
 # Transfer script transfer.pl
 # Author: Elia Farin 
 # Written: 8/9/24
@@ -22,15 +22,14 @@
 #
 use strict;
 use Getopt::Long;
-use re;
-my $username = getlogin() || (getpwuid($<))[0] || $ENV{LOGNAME} || $ENV{USER};
+
 
 # sane defaults
 my $file = "";
 my $host = "";
 my $directory = ".";
-my $user = $username;
-my $dest= "/home/$username/Downloads/";
+my $user = getlogin() || (getpwuid($<))[0] || $ENV{LOGNAME} || $ENV{USER};
+my $dest= "/home/$user/Downloads/";
 my $flags = "rvz";
 my $verbose;
 my $help;
@@ -45,6 +44,7 @@ my $result = GetOptions ( "file=s" => \$file,
 	"verbose" => \$verbose,
 	"help" => \$help);
 
+print "file: $file, host: $host, directory: $directory, user: $user, dest: $dest flags: $flags verbose: $verbose help: $help\n";
 ### Begin main logic
 # help catch
 if ($help) {
@@ -53,24 +53,42 @@ if ($help) {
 }
 # If we have all the right arguments, begin the copy
 elsif (length $file && length $host && length $user && length $dest && length $directory) {
-
+	#print "in elsif block\n";
 	# Open our filehandle
 	open my $info, $file or die "Could not open $file: $!";
 
+	
+	my $linenum = 0;
+	while( my $iterline = <$info>) {
+		#print "in first while loop\n";
+		$linenum++;
+	}
+	close $file;
+
+	open $info, $file or die "Could not open $file: $!";
+	my $xfernum = 0;
 	# read line by line
 	while( my $line = <$info> ) {
+		#print "in second while loop\n";
+		$xfernum++;
 		chomp $line;
 		# actual copy logic
 		if (length $verbose) {
+			#print "in verbose section";
+			print "\n\nTransferring object $xfernum of $linenum\n\n";
 			system("rsync", "-vvv", "-$flags", "$directory/$line", "$user\@$host:$dest");
 		} else {
+		#print "in non-verbose section";
+		print "\n\nTransferring object $xfernum of $linenum\n\n";
 		system("rsync", "-$flags", "$directory/$line", "$user\@$host:$dest");
 		}
 	}
+	close $file;
 
 } 
 # if we fail the variables check, print usage help
 else {
+	#print "In help else\n";
 	help();
 }
 
