@@ -1,0 +1,33 @@
+.Dd August 09, 2024
+.Os FreeBSD 14.1
+.Dt TRANSFER [1]
+.Sh NAME
+.Nm transfer 
+.Nd transfer files using rsync
+.Sh SYNOPSIS
+
+.Nm transfer 
+.Op Fl path Ar inpath
+.Op Fl host Ar host
+.Op Fl user Ar username
+.Op Fl dest Ar outpath
+.Op Fl flags Ar rsyncflags
+.Op Fl verbose
+.Op Fl help
+.Op Fl dir
+
+.Sh DESCRIPTION
+
+The .Nm transfer utility takes as input a list of absolute file or directory
+paths, and transfers those files or directories and their contents to a remote
+system.
+
+The following options are available:
+
+.Op path 
+.Bd -offset indent 
+
+.Sh ENVIRONMENT
+.Sh FILES 
+.Sh EXAMPLES
+
