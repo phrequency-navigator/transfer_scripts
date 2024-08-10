@@ -91,7 +91,7 @@ sub transfer {
 				system("rsync", "-vvv", "-$flags", "$dir/$line", "$user\@$host:$dest");
 			} else {
 			#print "in non-verbose section";
-			print "\n\nTransferring object $xfernum of $linenum\n\n";
+			print "\n\nTransferring object $xfernum of $linesnum\n\n";
 			system("rsync", "-$flags", "$dir/$line", "$user\@$host:$dest");
 			}
 		}
