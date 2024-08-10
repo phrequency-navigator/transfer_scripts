@@ -88,11 +88,11 @@ sub transfer {
 			if (length $verbose) {
 				#print "in verbose section";
 				print "\n\nTransferring object $xfernum of $linesnum\n\n";
-				system("rsync", "-vvv", "-$flags", "$dir/$line", "$user\@$host:$dest");
+				system("rsync", "-vvv", "-$flags", "$line", "$user\@$host:$dest");
 			} else {
 			#print "in non-verbose section";
 			print "\n\nTransferring object $xfernum of $linesnum\n\n";
-			system("rsync", "-$flags", "$dir/$line", "$user\@$host:$dest");
+			system("rsync", "-$flags", "$line", "$user\@$host:$dest");
 			}
 		}
 		close $path;
