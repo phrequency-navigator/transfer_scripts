@@ -106,7 +106,7 @@ sub transfer {
 					if ($returncode == 0) {
 						last;
 					} else {
-						$tries++:
+						$tries++;
 					}
 			}
 			} else {
