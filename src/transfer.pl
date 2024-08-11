@@ -34,7 +34,9 @@ my $flags = "rvz";
 my $verbose;
 my $help;
 my $dir;
-
+my $retries = 2;
+my $tries = 0;
+my $returncode;
 # options
 my $result = GetOptions ( "path=s" => \$path,
 	"host=s" => \$host,
@@ -43,6 +45,7 @@ my $result = GetOptions ( "path=s" => \$path,
 	"dest=s" => \$dest,
 	"flags=s" => \$flags,
 	"verbose" => \$verbose,
+	"retries" => \$retries,
 	"help" => \$help);
 
 
@@ -58,9 +61,17 @@ sub transfer {
 	elsif ($dir && length $host && length $dest && length $user) {
 
 		print "Transferring object 1 of 1 \n\n";
-
+		$tries = 0
 		# transfer our directory
-		system("rsync", "-$flags", "$dir", "$user\@$host:$dest");
+		while ($tries <= $retries) {
+
+			$returncode = system("rsync", "-$flags", "$dir", "$user\@$host:$dest");
+			if ($returncode == 0) {
+				last;
+			} else {
+				$tries++;
+			}
+		}
 	}
 	# If we have all the right options set for an infile, begin the copy
 	elsif (length $path && length $host && length $user && length $dest) {
@@ -85,15 +96,31 @@ sub transfer {
 			#print "in second while loop\n";
 			$xfernum++;
 			chomp $line;
+			$tries = 0;
 			# actual copy logic
 			if (length $verbose) {
-				#print "in verbose section";
-				print "\n\nTransferring object $xfernum of $linesnum\n\n";
-				system("rsync", "-vvv", "-$flags", "$line", "$user\@$host:$dest");
+				while ($tries <= $retries) {
+					#print "in verbose section";
+					print "\n\nTransferring object $xfernum of $linesnum\n\n";
+					$returncode = system("rsync", "-vvv", "-$flags", "$line", "$user\@$host:$dest");
+					if ($returncode == 0) {
+						last;
+					} else {
+						$tries++:
+					}
+			}
 			} else {
-			#print "in non-verbose section";
-			print "\n\nTransferring object $xfernum of $linesnum\n\n";
-			system("rsync", "-$flags", "$line", "$user\@$host:$dest");
+				while ($tries <= $retries) {
+					#print "in non-verbose section";
+					print "\n\nTransferring object $xfernum of $linesnum\n\n";
+					$returncode = system("rsync", "-$flags", "$line", "$user\@$host:$dest");
+
+					if ($returncode == 0) {
+						last;
+					} else {
+						$tries++;
+					}
+				}
 			}
 		}
 		close $path;
@@ -114,6 +141,7 @@ sub transfer {
 		--user 		- User account on the remote system to use
 		--dest 		- Destination on the remote system to copy files to
 		--flags 	- rsync flags to use when copying the files over. Defaults to rvz
+		--retries 	- number of retries on failed rsync (default 2)
 		--verbose	- run rsync with -vvv
 		--help 		- show this help\n";
 	}
