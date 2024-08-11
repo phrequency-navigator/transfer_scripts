@@ -61,7 +61,7 @@ sub transfer {
 	elsif ($dir && length $host && length $dest && length $user) {
 
 		print "Transferring object 1 of 1 \n\n";
-		$tries = 0
+		$tries = 0;
 		# transfer our directory
 		while ($tries <= $retries) {
 
